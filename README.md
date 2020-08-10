@@ -7,7 +7,21 @@
 * This repository contains the Open Source Software (OSS) components of NVIDIA TensorRT.
 * This branch provides instructions to **build TensorRT-OSS 7.1 based on TensorRT 6 release**
 
+## Setup test environment
+Clone and checkout this branch and setup the docker environment
+```
+$ git clone https://github.com/zlsh80826/TensorRT.git
+$ cd TensorRT
+$ git checkout origin/release7.1-nvinfer6
+$ bash scripts/build.sh
+$ bash scripts/launch
+```
+
 ## Build
+After above steps, you should enter the docker environment and the working dir = `/workspace/qkv_test`
+
+### Pre-check
+run `nvidia-smi` and check the Driver Version and CUDA Version
 
 ### Step 1
 Download the OSS 7.1 release
@@ -16,11 +30,11 @@ Download the OSS 7.1 release
 $ git clone 'https://github.com/NVIDIA/TensorRT.git'
 $ cd TensorRT
 $ git checkout origin/release/7.1
-$ git submodule update --init --recursive
+$ git submodule update --init --recursive -j 4
 ```
 
 ### Step 2
-Download the [TensorRT release](https://developer.nvidia.com/zh-cn/tensorrt) with both 6.0 and 7.1
+Download the [TensorRT release](https://developer.nvidia.com/zh-cn/tensorrt) with both 6.0 and 7.1 and locate the tar.gz files at `/workspace/qkv_test/TensorRT`
 
 * For TensorRT 6.0, select the tarfile installation with the target architecture and cuda version, e.g Ubuntu 18.04/CUDA 10.1
 * For TensorRT 7.1, any version is ok, we just need it to bypass the myelin library check (will not be used)
@@ -51,12 +65,64 @@ $ make -j`nproc` nvinfer_plugin
 
 ## Step 5 relink libnvinfer
 ```
-$ cd $TRT_SOURCE
+$ cd $TRT_SOURCE/lib
 $ unlink libnvinfer_plugin.so && unlink libnvinfer_plugin.so.7
 $ ln -sf libnvinfer_plugin.so.7.1.3 libnvinfer_plugin.so.6 && ln -sf libnvinfer_plugin.so.6 libnvinfer_plugin.so
 ```
 
-
 ## Test
+Please test following scripts on the GPU with architecture `Turing`
 
-python build.py --fp16 && python inference.py --fp16
+```
+$ export LD_LIBRARY_PATH=$TRT_SOURCE/lib:$LD_LIBRARY_PATH
+$ cd /workspace/qkv_test/test # enter test directory
+$ python build.py --fp16 && python inference.py --fp16
+```
+
+if success, it should output:
+```
+[ 4.8813505e-05  2.1518937e-04  1.0276338e-04  4.4883182e-05
+ -7.6345197e-05  1.4589411e-04 -6.2412786e-05  3.9177301e-04
+  4.6366276e-04 -1.1655848e-04]
+[-1.8144418e-10            nan -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10            nan
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10            nan            nan
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10            nan            nan -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10            nan -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+ -1.8144418e-10 -1.8144418e-10 -1.8144418e-10 -1.8144418e-10
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00
+  0.0000000e+00  0.0000000e+00  0.0000000e+00  0.0000000e+00]
+```
+
+## Problem Shooting
+
+### docker: Unknown runtime specified nvidia
+If you meet follow message, please change the option `--runtime=nvidia` to `--gpus all` in the `scripts/launch.sh`
+```
+docker: Error response from daemon: Unknown runtime specified nvidia.
+See 'docker run --help'.
+```
