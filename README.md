@@ -29,7 +29,7 @@ Download the [TensorRT release](https://developer.nvidia.com/zh-cn/tensorrt) wit
 $ # after downloading TensorRT release ...
 $ tar -xf TensorRT-6.0.1.5.Ubuntu-18.04.x86_64-gnu.cuda-10.1.cudnn7.6.tar.gz
 $ tar -xf TensorRT-7.1.3.4.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn8.0.tar.gz
-$ cp -a TensorRT-7.1.3.4/lib/libmyelin.so* TensorRT-6.0.1.5 # TensorRT-7.1 CMakefile will check whether myelin libraries exist
+$ cp -a TensorRT-7.1.3.4/lib/libmyelin.so* TensorRT-6.0.1.5/lib # TensorRT-7.1 CMakefile will check whether myelin libraries exist
 ```
 
 ### Step 3
@@ -41,7 +41,20 @@ $ export TRT_SOURCE=`pwd`
 ```
 
 ### Step 4
-Configure cmake and build
+Configure cmake and build, please make sure `nvcc` is in the `PATH`
+```
+$ cd $TRT_SOURCE
+$ mkdir -p build && cd build
+$ cmake .. -DTRT_LIB_DIR=$TRT_RELEASE/lib -DTRT_OUT_DIR=$TRT_SOURCE/lib
+$ make -j`nproc` nvinfer_plugin
+```
+
+## Step 5 relink libnvinfer
+```
+$ cd $TRT_SOURCE
+$ unlink libnvinfer_plugin.so && unlink libnvinfer_plugin.so.7
+$ ln -sf libnvinfer_plugin.so.7.1.3 libnvinfer_plugin.so.6 && ln -sf libnvinfer_plugin.so.6 libnvinfer_plugin.so
+```
 
 
 ## Test
