@@ -34,16 +34,13 @@ $ git submodule update --init --recursive -j 4
 ```
 
 ### Step 2
-Download the [TensorRT release](https://developer.nvidia.com/zh-cn/tensorrt) with both 6.0 and 7.1 and locate the tar.gz files at `/workspace/qkv_test/TensorRT`
+Download the [TensorRT-6.0 release](https://developer.nvidia.com/zh-cn/tensorrt) and locate the tar.gz file at `/workspace/qkv_test/TensorRT`
 
-* For TensorRT 6.0, select the tarfile installation with the target architecture and cuda version, e.g Ubuntu 18.04/CUDA 10.1
-* For TensorRT 7.1, any version is ok, we just need it to bypass the myelin library check (will not be used)
+* Please select the tarfile installation with the target architecture and cuda version, e.g Ubuntu 18.04/CUDA 10.1
 
 ```
 $ # after downloading TensorRT release ...
 $ tar -xf TensorRT-6.0.1.5.Ubuntu-18.04.x86_64-gnu.cuda-10.1.cudnn7.6.tar.gz
-$ tar -xf TensorRT-7.1.3.4.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn8.0.tar.gz
-$ cp -a TensorRT-7.1.3.4/lib/libmyelin.so* TensorRT-6.0.1.5/lib # TensorRT-7.1 CMakefile will check whether myelin libraries exist
 ```
 
 ### Step 3
@@ -59,7 +56,7 @@ Configure cmake and build, please make sure `nvcc` is in the `PATH`
 ```
 $ cd $TRT_SOURCE
 $ mkdir -p build && cd build
-$ cmake .. -DTRT_LIB_DIR=$TRT_RELEASE/lib -DTRT_OUT_DIR=$TRT_SOURCE/lib
+$ cmake .. -DTRT_LIB_DIR=$TRT_RELEASE/lib -DTRT_OUT_DIR=$TRT_SOURCE/lib -DBUILD_PARSERS=OFF -DBUILD_SAMPLES=OFF
 $ make -j`nproc` nvinfer_plugin
 ```
 
