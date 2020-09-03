@@ -202,7 +202,7 @@ bool QKVToContextPluginDynamic::supportsFormatCombination(
             const auto* inMask = &inOut[1];
             // detect full mask and check that it was produced
             const bool useFullMask = (mType == DataType::kHALF || mType == DataType::kINT8)
-                && (in->dims.d[SDIM] == 128 || in->dims.d[SDIM] == 384) && (mSM == kSM_TURING || mSM == kSM_AMPERE);
+                && (in->dims.d[SDIM] == 128 || in->dims.d[SDIM] == 384 || in->dims.d[SDIM] == -1) && (mSM == kSM_TURING || mSM == kSM_AMPERE);
 
             if (useFullMask)
             {
@@ -357,7 +357,7 @@ int QKVToContextPluginDynamic::enqueue(const PluginTensorDesc* inputDesc, const 
     const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream)
 {
     assert(mS == inputDesc->dims.d[SDIM]);
-    assert(mB == inputDesc->dims.d[BDIM]);
+    // assert(mB == inputDesc->dims.d[BDIM]); // this will cause problem with nvinfer 6.0
 
     const void* maskPtr = mHasImask ? inputs[1] : nullptr;
     this->dispatcher->run(inputDesc[0], outputDesc[0], inputs[0], maskPtr, outputs[0], workspace, stream);

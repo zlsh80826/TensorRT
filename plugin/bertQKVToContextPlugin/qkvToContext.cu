@@ -70,8 +70,25 @@ __global__ void maskedSoftmax(const float rsqrtHeadSize, const T* input, T* outp
 #pragma unroll
     for (int it = 0; it < VPT; it++)
     {
+        local[it] = (threadIdx.x < lastValid) ? float(tmp.shm[it * TPB + threadIdx.x]) : -1e20f;
+    }
+    __syncthreads();
+
+#pragma unroll
+    for (int it = 0; it < VPT; it++) {
+        const auto max_ = BlockReduce(tmp.reduce).Reduce(local[it], cub::Max());
+        if (threadIdx.x == 0) {
+            s_max = max_;
+        }
+        __syncthreads();
+        local[it] -= s_max;
+    }
+
+#pragma unroll
+    for (int it = 0; it < VPT; it++)
+    {
         local[it]
-            = (threadIdx.x < lastValid) ? myExp<float>((rsqrtHeadSize) * float(tmp.shm[it * TPB + threadIdx.x])) : 0.f;
+            = (threadIdx.x < lastValid) ? myExp<float>(local[it]) : 0.f;
     }
     __syncthreads();
 
