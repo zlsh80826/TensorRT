@@ -276,20 +276,25 @@ __device__ inline void scaledSoftmaxSmall(
 
     __shared__ typename BlockReduce::TempStorage tmpStorage;
 
-    __shared__ float rZ;
+    __shared__ float rZ, s_max;
 
     const int offset = (blockIdx.y * gridDim.x + blockIdx.x) * ld;
 
-    const float w(rsqrtHeadSize);
     cub::Sum sum;
-    float threadData(0);
+    cub::Max max;
 
     const int idx = offset + threadIdx.x;
-    if (threadIdx.x < lastValid)
+
+    float threadData = (threadIdx.x < lastValid) ? rsqrtHeadSize * float(input[idx]) : -1e20f;
+    const auto max_ = BlockReduce(tmpStorage).Reduce(threadData, max);
+
+    if (threadIdx.x == 0) 
     {
-        const float val = input[idx];
-        threadData = exp(val * w);
+        s_max = max_;
     }
+    __syncthreads();
+
+    threadData = (threadIdx.x < lastValid) ? exp(threadData - s_max) : 0.f;
 
     const auto Z = BlockReduce(tmpStorage).Reduce(threadData, sum);
 

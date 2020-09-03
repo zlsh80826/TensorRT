@@ -59,7 +59,7 @@ __global__ void maskedSoftmax(const float rsqrtHeadSize, const T* input, T* outp
     __syncthreads();
     float local[VPT];
 
-    __shared__ float rZ;
+    __shared__ float rZ, s_max;
 
     const int idx = (blockOffset + threadIdx.x) * VPT;
     T* myshm = &tmp.shm[threadIdx.x * VPT];
@@ -70,7 +70,7 @@ __global__ void maskedSoftmax(const float rsqrtHeadSize, const T* input, T* outp
 #pragma unroll
     for (int it = 0; it < VPT; it++)
     {
-        local[it] = (threadIdx.x < lastValid) ? float(tmp.shm[it * TPB + threadIdx.x]) : -1e20f;
+        local[it] = (threadIdx.x < lastValid) ? rsqrtHeadSize * float(tmp.shm[it * TPB + threadIdx.x]) : -1e20f;
     }
     __syncthreads();
 
