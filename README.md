@@ -27,7 +27,7 @@ run `nvidia-smi` and check the Driver Version and CUDA Version
 Download the OSS 7.1 release (fixed version)
 
 ```
-$ git clone 'https://github.com/zlsh80826/TensorRT.git'
+$ git clone 'https://github.com/NVIDIA/TensorRT'
 $ cd TensorRT
 $ git checkout origin/release/7.1
 $ git submodule update --init --recursive
