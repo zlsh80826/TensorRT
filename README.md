@@ -12,7 +12,7 @@ Clone and checkout this branch and setup the docker environment
 ```
 $ git clone https://github.com/zlsh80826/TensorRT.git
 $ cd TensorRT
-$ git checkout origin/release7.1-nvinfer6
+$ git checkout origin/release7.2-nvinfer6
 $ bash scripts/build.sh
 $ bash scripts/launch.sh
 ```
@@ -24,30 +24,30 @@ After above steps, you should enter the docker environment and the working dir =
 run `nvidia-smi` and check the Driver Version and CUDA Version
 
 ### Step 1
-Download the OSS 7.1 release (fixed version)
+Download the OSS 7.2 release (fixed version)
 
 ```
 $ git clone 'https://github.com/NVIDIA/TensorRT'
 $ cd TensorRT
-$ git checkout origin/release/7.1
+$ git checkout origin/release/7.2
 $ git submodule update --init --recursive
 ```
 
 ### Step 2
 Download the [TensorRT-6.0 release](https://developer.nvidia.com/zh-cn/tensorrt) and locate the tar.gz file at `/workspace/qkv_test/TensorRT`
 
-* Please select the tarfile installation with the target architecture and cuda version, e.g Ubuntu 18.04/CUDA 10.1
+* Please select the tarfile installation with the target architecture and cuda version, e.g Ubuntu 18.04/CUDA 10.2
 
 ```
 $ # after downloading TensorRT release ...
-$ tar -xf TensorRT-6.0.1.5.Ubuntu-18.04.x86_64-gnu.cuda-10.1.cudnn7.6.tar.gz
+$ tar xf TensorRT-6.0.1.8.Ubuntu-18.04.x86_64-gnu.cuda-10.2.cudnn7.6.tar.gz 
 ```
 
 ### Step 3
-Set `$TRT_RELEASE` to the path of `TensorRT-6.0.1.5` and `$TRT_SOURCE` to the path of this repo
+Set `$TRT_RELEASE` to the path of `TensorRT-6.0.1.8` and `$TRT_SOURCE` to the path of this repo
 
 ```
-$ export TRT_RELEASE=`pwd`/TensorRT-6.0.1.5
+$ export TRT_RELEASE=`pwd`/TensorRT-6.0.1.8
 $ export TRT_SOURCE=`pwd`
 ```
 
@@ -64,7 +64,7 @@ $ make -j`nproc` nvinfer_plugin
 ```
 $ cd $TRT_SOURCE/lib
 $ unlink libnvinfer_plugin.so && unlink libnvinfer_plugin.so.7
-$ ln -sf libnvinfer_plugin.so.7.1.3 libnvinfer_plugin.so.6 && ln -sf libnvinfer_plugin.so.6 libnvinfer_plugin.so
+$ ln -sf libnvinfer_plugin.so.7.2.1 libnvinfer_plugin.so.6 && ln -sf libnvinfer_plugin.so.6 libnvinfer_plugin.so
 ```
 
 ## Test
