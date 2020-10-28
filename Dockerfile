@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM nvcr.io/nvidia/tensorrt:19.09-py3
+FROM nvcr.io/nvidia/tensorrt:19.12-py3
 
 LABEL maintainer="NVIDIA CORPORATION"
 
