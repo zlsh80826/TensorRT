@@ -14,7 +14,7 @@ $ git clone https://github.com/zlsh80826/TensorRT.git
 $ cd TensorRT
 $ git checkout origin/release7.1-nvinfer6
 $ bash scripts/build.sh
-$ bash scripts/launch
+$ bash scripts/launch.sh
 ```
 
 ## Build
