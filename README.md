@@ -5,7 +5,7 @@
 # TensorRT Open Source Software
 
 * This repository contains the Open Source Software (OSS) components of NVIDIA TensorRT.
-* This branch provides instructions to **build TensorRT-OSS 7.1 based on TensorRT 6 release**
+* This branch provides instructions to **build TensorRT-OSS 7.2 based on TensorRT 6 release**
 
 ## Setup test environment
 Clone and checkout this branch and setup the docker environment
