@@ -900,7 +900,7 @@ public:
         , sm(interface->mSm)
         , xmmaKernel(getXMMAKernelsV2(DATA_TYPE_FP16, sm))
     {
-        assert((sm == kSM_80 || sm == kSM_75) && "Unsupported architecture");
+        assert((sm == kSM_86 || sm == kSM_80 || sm == kSM_75) && "Unsupported architecture");
         params.clear();
     }
 
